@@ -43,7 +43,7 @@ createThoughts({ body }, res) {
         return User.findOneAndUpdate(
             { username: username }, 
             { $push: { thoughts: _id } },
-            { new: true, runValidators: true}
+            { new: true, runValidators: true }
         ) 
 })
 .then(dbUserData => {
@@ -57,8 +57,27 @@ createThoughts({ body }, res) {
 .catch(err=> {
     console.log(err);
     res.status(400).json(err);
-})
+});
 }, 
+updateThoughts({ body, params }, res) {
+    Thoughts.findOneAndUpdated({ _id: params.id }, body, { new: true, runValidators: true })
+    .then(dbThoughtsData => {   
+        if (!dbThoughtsData) {
+        res.status(404).json({ message: "This id contains no thought message."})
+        }
+
+        res.json(dbThoughtsData);
+    })
+}, 
+deleteThoughts({ params }, res) {
+    Thoughts.findOneAndDelete({ _: params.id })
+        .then(({ usernmae }) => {
+            return User.findOneAndUpdate(
+                { username: username },
+                { $pull: { thoughts: params.id } }, 
+                { new: true } 
+            )
+    
 createReaction({ params, body }, res) {
     Thoughts.findOneAndUpdate(
         { _id: params.thoughtId },
